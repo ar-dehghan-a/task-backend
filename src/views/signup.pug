@@ -1,0 +1,22 @@
+extends default
+
+block content
+    .container
+      .login-box
+        h2 Login
+        form(id="signUpForm")
+            .user-box
+                input(type="text", name="name", required)
+                label Name
+            .user-box
+                input(type="email", name="email", required)
+                label Email
+            .user-box
+                input(type="password", name="password",  minlength="8", required)
+                label Password
+            .user-box
+                input(type="password", name="confirmPassword",  minlength="8", required)
+                label ConfirmPassword
+            button(type="submit") Sign Up
+
+    script(src="/js/register.js")

@@ -1,0 +1,16 @@
+extends default
+
+block content
+    .container
+      .login-box
+        h2 Login
+        form(id="loginForm")
+          .user-box
+            input(type="email", name="email", required)
+            label Email
+          .user-box
+            input(type="password", name="password",  minlength="8", required)
+            label Password
+          button(type="submit") Sign In
+
+    script(src="/js/login.js")

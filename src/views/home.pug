@@ -1,0 +1,10 @@
+extends default
+
+block content
+    .todo-container
+      h1 فهرست وظایف
+      div.form-container
+        input(type="text", id="task-input", placeholder="افزودن تسک جدید")
+        button.btn-add(onclick="addTask()") افزودن
+      ul#todo-list
+    script(src="/js/todo.js")
