@@ -9,6 +9,8 @@ const handleValidationErrorDB = err => {
   return new AppError(message, 400);
 };
 
+const handleDatabaseError = () => new AppError('مقدار وارد شده معتبر نمی‌باشد', 400);
+
 const handleJWTError = () => new AppError('توکن اشتباه است. لطفا دوباره وارد شوید', 401);
 
 const handleJWTExpiredError = () =>
@@ -53,6 +55,7 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(error, res);
   } else if (process.env.NODE_ENV === 'production') {
+    if (error.name === 'SequelizeDatabaseError') error = handleDatabaseError();
     if (error.name === 'SequelizeValidationError') error = handleValidationErrorDB(error);
     if (error.name === 'JsonWebTokenError') error = handleJWTError();
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();

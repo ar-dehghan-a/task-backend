@@ -26,15 +26,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // 3) Routs
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.render('home', {title: 'Task Manager'});
 });
 
-app.get('/login', (req, res) => {
+app.get('/login', (_, res) => {
   res.render('login', {title: 'Login'});
 });
 
-app.get('/signup', (req, res) => {
+app.get('/signup', (_, res) => {
   res.render('signup', {title: 'Sign Up'});
 });
 

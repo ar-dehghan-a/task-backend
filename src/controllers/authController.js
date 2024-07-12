@@ -48,7 +48,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  let token;
+  let token = '';
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     // eslint-disable-next-line prefer-destructuring
     token = req.headers.authorization.split(' ')[1];
