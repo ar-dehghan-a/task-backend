@@ -34,10 +34,9 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) return next(new AppError('لطفا ایمیل و پسورد خود را وارد کنید', 400));
 
   const user = await User.findOne({where: {email: req.body.email}});
-  if (!user) return next(new AppError('ایمیل یا رمز عبور اشتباه است', 401));
+  const correct = await user.correctPassword(password, user.password);
 
-  const correct = user.correctPassword(password, user.password);
-  if (!correct) return next(new AppError('ایمیل یا رمز عبور اشتباه است', 401));
+  if (!user || !correct) return next(new AppError('ایمیل یا رمز عبور اشتباه است', 401));
 
   const token = signToken(user.id);
 
@@ -71,3 +70,12 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
+    if (!roles.includes(req.query.user.role))
+      return next(new AppError('شما دسترسی به این عملیات را ندارید', 403));
+
+    next();
+  };

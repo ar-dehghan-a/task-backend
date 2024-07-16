@@ -70,7 +70,7 @@ User.beforeSave(async user => {
   }
 });
 
-User.prototype.correctPassword = (candidatePassword, userPassword) =>
+User.prototype.correctPassword = async (candidatePassword, userPassword) =>
   bcrypt.compareSync(candidatePassword, userPassword);
 
 User.prototype.changedPasswordAfter = (user, JWTTimestamp) => {
