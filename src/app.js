@@ -38,8 +38,8 @@ app.get('/signup', (_, res) => {
   res.render('signup', {title: 'Sign Up'});
 });
 
-app.use('/tasks', taskRouter);
-app.use('/users', userRouter);
+app.use('/api/v1/tasks', taskRouter);
+app.use('/api/v1/users', userRouter);
 
 // catch 404 and forward to error handler
 app.all('*', (req, res, next) => {

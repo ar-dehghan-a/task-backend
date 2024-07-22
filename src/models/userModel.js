@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-
+const crypto = require('crypto');
 const {DataTypes} = require('sequelize');
 const sequelize = require('../utils/database');
 const AppError = require('../utils/appError');
@@ -55,6 +55,8 @@ const User = sequelize.define('User', {
     defaultValue: 'user',
   },
   passwordChangedAt: DataTypes.DATE,
+  passwordResetToken: DataTypes.STRING,
+  passwordResetExpires: DataTypes.DATE,
 });
 
 User.beforeValidate(user => {
@@ -63,10 +65,17 @@ User.beforeValidate(user => {
   }
 });
 
-User.beforeSave(async user => {
+User.beforeSave(async (user, options) => {
   if (user.changed('password')) {
     user.password = await bcrypt.hash(user.password, 12);
-    user.confirmPassword = undefined;
+    user.confirmPassword = null;
+    options.validate = false;
+  }
+});
+
+User.beforeUpdate(async user => {
+  if (user.changed('password')) {
+    user.passwordChangedAt = Date.now() - 1000;
   }
 });
 
@@ -82,16 +91,20 @@ User.prototype.changedPasswordAfter = (user, JWTTimestamp) => {
   return false;
 };
 
-// User.prototype.createPasswordResetToken = function () {
-//   const resetToken = crypto.randomBytes(32).toString('hex');
+User.prototype.createPasswordResetToken = async user => {
+  const resetToken = crypto.randomBytes(32).toString('hex');
 
-//   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  await user.update(
+    {
+      passwordResetToken: crypto.createHash('sha256').update(resetToken).digest('hex'),
+      passwordResetExpires: Date.now() + 10 * 60 * 1000,
+    },
+    {
+      validate: false,
+    }
+  );
 
-//   console.log({resetToken}, this.passwordResetToken);
-
-//   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
-//   return resetToken;
-// };
+  return resetToken;
+};
 
 module.exports = User;

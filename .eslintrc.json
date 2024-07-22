@@ -14,7 +14,8 @@
     "prettier/prettier": "error",
     "consistent-return": "off",
     "no-unused-vars": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "prefer-destructuring": "off"
     // "no-console": "off"
   }
 }
