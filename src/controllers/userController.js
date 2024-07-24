@@ -1,5 +1,15 @@
 const User = require('../models/userModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.findAll({
@@ -12,6 +22,19 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     data: {
       users,
     },
+  });
+});
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm)
+    return next(new AppError('دیتا وارد شده اشتباه است.', 400));
+
+  const user = await User.findByPk(req.query.user.id);
+  await user.update(filterObj(req.body, 'name', 'email'), {validate: false});
+
+  res.status(200).json({
+    status: 'success',
+    data: {user},
   });
 });
 

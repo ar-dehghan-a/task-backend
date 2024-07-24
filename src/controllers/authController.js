@@ -59,11 +59,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  const currentUser = await User.findByPk(decoded.id, {
-    attributes: {
-      exclude: ['password', 'confirmPassword'],
-    },
-  });
+  const currentUser = await User.findByPk(decoded.id);
   if (!currentUser) return next(new AppError('کاربر متعلق به این توکن دیگر وجود ندارد', 401));
 
   if (currentUser.changedPasswordAfter(currentUser, decoded.iat))
