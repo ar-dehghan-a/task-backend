@@ -4,60 +4,74 @@ const {DataTypes} = require('sequelize');
 const sequelize = require('../utils/database');
 const AppError = require('../utils/appError');
 
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    unique: true,
-    primaryKey: true,
-    readOnly: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notNull: {msg: 'لطفا نام خود را وارد کنید'},
-      notEmpty: {msg: 'نام نمی‌تواند خالی باشد'},
+const User = sequelize.define(
+  'User',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      unique: true,
+      primaryKey: true,
+      readOnly: true,
     },
-  },
-  email: {
-    type: DataTypes.STRING,
-    unique: {msg: 'ایمیل نباید تکراری باشد'},
-    allowNull: false,
-    validate: {
-      isEmail: {msg: 'ایمیل اشتباه است'},
-      notNull: {msg: 'ایمیل اجباری است'},
-      isLowercase: true,
-    },
-  },
-  photo: DataTypes.STRING,
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notNull: {msg: 'رمز اجباری است'},
-      len: {
-        args: [8],
-        msg: 'رمز باید بیش از ۸ کاراکتر باشد',
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {msg: 'لطفا نام خود را وارد کنید'},
+        notEmpty: {msg: 'نام نمی‌تواند خالی باشد'},
       },
     },
-  },
-  confirmPassword: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  role: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isIn: [['admin', 'user']],
+    email: {
+      type: DataTypes.STRING,
+      unique: {msg: 'ایمیل نباید تکراری باشد'},
+      allowNull: false,
+      validate: {
+        isEmail: {msg: 'ایمیل اشتباه است'},
+        notNull: {msg: 'ایمیل اجباری است'},
+        isLowercase: true,
+      },
     },
-    defaultValue: 'user',
+    photo: DataTypes.STRING,
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {msg: 'رمز اجباری است'},
+        len: {
+          args: [8],
+          msg: 'رمز باید بیش از ۸ کاراکتر باشد',
+        },
+      },
+    },
+    confirmPassword: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [['admin', 'user']],
+      },
+      defaultValue: 'user',
+    },
+    passwordChangedAt: DataTypes.DATE,
+    passwordResetToken: DataTypes.STRING,
+    passwordResetExpires: DataTypes.DATE,
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
   },
-  passwordChangedAt: DataTypes.DATE,
-  passwordResetToken: DataTypes.STRING,
-  passwordResetExpires: DataTypes.DATE,
-});
+  {
+    defaultScope: {
+      where: {
+        active: true,
+      },
+    },
+  }
+);
 
 User.beforeValidate(user => {
   if (user.password !== user.confirmPassword) {
